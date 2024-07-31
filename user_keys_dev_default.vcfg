@@ -26,6 +26,7 @@
 		"e" 			"+use"
 		"f" 			"+lookatweapon"
 		"g" 			"drop"
+		"h" 			"switchhands"
 		"i" 			"show_loadout_toggle"
 		"m" 			"teammenu"
 		"q" 			"lastinv"
@@ -59,7 +60,7 @@
 		"MOUSE2" 		"+attack2"
 		"MOUSE3"		"player_ping"
 		"MOUSE4" 		"+voicerecord"
-		"DEL" 			"mute"
+		"DEL" 			"sellbackall"
 	}
 	
 	"analogbindings"
