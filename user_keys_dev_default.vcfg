@@ -61,6 +61,18 @@
 		"MOUSE3"		"player_ping"
 		"MOUSE4" 		"+voicerecord"
 		"DEL" 			"sellbackall"
+		"JOY1"			"+jump"
+		"JOY2"			"+reload"
+		"JOY4"			"+showscores"
+		"JOY5" 			"invprev"
+		"JOY6"			"invnext"
+		"JOY9" 			"+duck"
+		"POV_UP" 		"slot1"
+		"POV_RIGHT"		"slot2"
+		"POV_DOWN" 		"slot3"
+		"POV_LEFT" 		"slot4"
+		"V_AXIS_POS"	"+attack"
+		"Z_AXIS_POS"	"+attack2"
 	}
 	
 	"analogbindings"
@@ -69,7 +81,7 @@
 		"Y_AXIS"	"!forwardback"
 		"MOUSE_X"	"yaw"
 		"MOUSE_Y"	"pitch"
-		"U_AXIS"	"yaw"
-		"R_AXIS"	"pitch"
+		"R_AXIS"	"yaw"
+		"U_AXIS"	"pitch"
 	}
 }
