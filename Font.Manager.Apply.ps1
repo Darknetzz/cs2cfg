@@ -30,7 +30,7 @@ try {
     Copy-Item -Path $SourceDir -Destination $DestDir -Recurse -Force -Container -ErrorAction Stop
     Write-Output "Copied directory '$(Split-Path -Leaf $SourceDir)' into '$DestDir' successfully."
     Remove-Item -Path $SourceDir -Recurse
-    Write-Output "Removed source directory '$(Split-Path -Leaf SourceDir)'"
+    Write-Output "Removed source directory '$(Split-Path -Leaf $SourceDir)'"
     exit 0
 } catch {
     Write-Error "Failed to copy directory: $($_.Exception.Message)"
