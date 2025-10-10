@@ -3,18 +3,8 @@ $Path     = "C:\Program Files (x86)\Steam\steamapps\common\Counter-Strike Global
 $FromPath = "csgo"
 $ToPath   = "game"
 
-if (!Test-Path $Path) {
+if (-not (Test-Path -Path $Path -PathType Container)) {
     Write-Output "Path $Path does not exist";
-    exit 1;
-}
-
-if (!Test-Path $FromPath) {
-    Write-Output "Source path $FromPath does not exist";
-    exit 1;
-}
-
-if (!Test-Path $ToPath) {
-    Write-Output "Destination path $ToPath does not exist";
     exit 1;
 }
 
@@ -30,7 +20,8 @@ if (!(Test-Path -Path $SourceDir -PathType Container)) {
 
 # Ensure destination directory exists
 if (!(Test-Path -Path $DestDir -PathType Container)) {
-    New-Item -Path $DestDir -ItemType Directory -Force | Out-Null
+    Write-Error "Destination directory '$DestDir' does not exist."
+    exit 1
 }
 
 try {
@@ -38,9 +29,10 @@ try {
     # This results in "$DestDir\$(Split-Path -Leaf $SourceDir)" being created/updated
     Copy-Item -Path $SourceDir -Destination $DestDir -Recurse -Force -Container -ErrorAction Stop
     Write-Output "Copied directory '$(Split-Path -Leaf $SourceDir)' into '$DestDir' successfully."
+    Remove-Item -Path $SourceDir -Recurse
+    Write-Output "Removed source directory '$(Split-Path -Leaf SourceDir)'"
     exit 0
-}
-catch {
+} catch {
     Write-Error "Failed to copy directory: $($_.Exception.Message)"
     exit 1
 }
