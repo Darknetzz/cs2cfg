@@ -1,4 +1,4 @@
-
+#!/usr/bin/env pwsh
 $Path     = "C:\Program Files (x86)\Steam\steamapps\common\Counter-Strike Global Offensive"
 $FromPath = "csgo"
 $ToPath   = "game"
