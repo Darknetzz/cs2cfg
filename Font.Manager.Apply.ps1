@@ -17,7 +17,12 @@ $DestDir   = Join-Path -Path $Path -ChildPath $ToPath
 if ($exitCode -eq 0) {
     # Validate source exists
     if (!(Test-Path -Path $SourceDir -PathType Container)) {
-        Write-Error "Source directory '$SourceDir' does not exist."
+        Write-Error @"
+Source directory '$SourceDir' does not exist.
+
+This script merges the staging 'csgo' folder created by Font Manager CS2 into 'game'.
+Run Font Manager CS2 first, click 'Apply Selected Font', then run this script again.
+"@
         $exitCode = 1
     }
 
