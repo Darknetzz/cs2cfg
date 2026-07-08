@@ -3,36 +3,44 @@ $Path     = "C:\Program Files (x86)\Steam\steamapps\common\Counter-Strike Global
 $FromPath = "csgo"
 $ToPath   = "game"
 
+$exitCode = 0
+
 if (-not (Test-Path -Path $Path -PathType Container)) {
-    Write-Output "Path $Path does not exist";
-    exit 1;
+    Write-Output "Path $Path does not exist"
+    $exitCode = 1
 }
 
 # Build absolute source and destination paths
 $SourceDir = Join-Path -Path $Path -ChildPath $FromPath
 $DestDir   = Join-Path -Path $Path -ChildPath $ToPath
 
-# Validate source exists
-if (!(Test-Path -Path $SourceDir -PathType Container)) {
-    Write-Error "Source directory '$SourceDir' does not exist."
-    exit 1
+if ($exitCode -eq 0) {
+    # Validate source exists
+    if (!(Test-Path -Path $SourceDir -PathType Container)) {
+        Write-Error "Source directory '$SourceDir' does not exist."
+        $exitCode = 1
+    }
+
+    # Ensure destination directory exists
+    if ($exitCode -eq 0 -and !(Test-Path -Path $DestDir -PathType Container)) {
+        Write-Error "Destination directory '$DestDir' does not exist."
+        $exitCode = 1
+    }
 }
 
-# Ensure destination directory exists
-if (!(Test-Path -Path $DestDir -PathType Container)) {
-    Write-Error "Destination directory '$DestDir' does not exist."
-    exit 1
+if ($exitCode -eq 0) {
+    try {
+        # Copy the $FromPath directory into the $ToPath directory
+        # This results in "$DestDir\$(Split-Path -Leaf $SourceDir)" being created/updated
+        Copy-Item -Path $SourceDir -Destination $DestDir -Recurse -Force -Container -ErrorAction Stop
+        Write-Output "Copied directory '$(Split-Path -Leaf $SourceDir)' into '$DestDir' successfully."
+        Remove-Item -Path $SourceDir -Recurse
+        Write-Output "Removed source directory '$(Split-Path -Leaf $SourceDir)'"
+    } catch {
+        Write-Error "Failed to copy directory: $($_.Exception.Message)"
+        $exitCode = 1
+    }
 }
 
-try {
-    # Copy the $FromPath directory into the $ToPath directory
-    # This results in "$DestDir\$(Split-Path -Leaf $SourceDir)" being created/updated
-    Copy-Item -Path $SourceDir -Destination $DestDir -Recurse -Force -Container -ErrorAction Stop
-    Write-Output "Copied directory '$(Split-Path -Leaf $SourceDir)' into '$DestDir' successfully."
-    Remove-Item -Path $SourceDir -Recurse
-    Write-Output "Removed source directory '$(Split-Path -Leaf $SourceDir)'"
-    exit 0
-} catch {
-    Write-Error "Failed to copy directory: $($_.Exception.Message)"
-    exit 1
-}
+Read-Host "Press Enter to exit"
+exit $exitCode
