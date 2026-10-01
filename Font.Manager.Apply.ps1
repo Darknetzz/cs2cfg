@@ -1,8 +1,23 @@
 #!/usr/bin/env pwsh
-$InstallRoot = 'C:\Program Files (x86)\Steam\steamapps\common\Counter-Strike Global Offensive'
-$DestDir     = Join-Path $InstallRoot 'game'
-$GameCsgoDir = Join-Path $DestDir 'csgo'
-$exitCode    = 0
+$exitCode = 0
+
+function Get-FontManagerCsgoPath {
+    $settingsFile = Join-Path $env:APPDATA 'Font Manager\Data\settings.json'
+    if (-not (Test-Path -LiteralPath $settingsFile)) {
+        return $null
+    }
+
+    try {
+        $csgoPath = (Get-Content -LiteralPath $settingsFile -Raw | ConvertFrom-Json).CsgoPath
+        if ($csgoPath) {
+            return $csgoPath
+        }
+    } catch {
+        Write-Warning "Could not read Font Manager settings: $($_.Exception.Message)"
+    }
+
+    return $null
+}
 
 function Get-FontManagerStagingDir {
     param([string]$Root)
@@ -10,20 +25,6 @@ function Get-FontManagerStagingDir {
     $candidates = @(
         (Join-Path $Root 'csgo')
     )
-
-    $settingsFile = Join-Path $env:APPDATA 'Font Manager\Data\settings.json'
-    if (Test-Path -LiteralPath $settingsFile) {
-        try {
-            $csgoPath = (Get-Content -LiteralPath $settingsFile -Raw | ConvertFrom-Json).CsgoPath
-            if ($csgoPath) {
-                $candidates = @(
-                    (Join-Path $csgoPath 'csgo')
-                ) + $candidates
-            }
-        } catch {
-            Write-Warning "Could not read Font Manager settings: $($_.Exception.Message)"
-        }
-    }
 
     foreach ($candidate in $candidates | Select-Object -Unique) {
         if (Test-Path -LiteralPath $candidate -PathType Container) {
@@ -34,7 +35,18 @@ function Get-FontManagerStagingDir {
     return $null
 }
 
-if (-not (Test-Path -LiteralPath $InstallRoot -PathType Container)) {
+$InstallRoot = Get-FontManagerCsgoPath
+if (-not $InstallRoot) {
+    Write-Error "Could not read CsgoPath from Font Manager settings ($env:APPDATA\Font Manager\Data\settings.json)."
+    $exitCode = 1
+}
+
+if ($exitCode -eq 0) {
+    $DestDir     = Join-Path $InstallRoot 'game'
+    $GameCsgoDir = Join-Path $DestDir 'csgo'
+}
+
+if ($exitCode -eq 0 -and -not (Test-Path -LiteralPath $InstallRoot -PathType Container)) {
     Write-Error "Install root '$InstallRoot' does not exist."
     $exitCode = 1
 }
