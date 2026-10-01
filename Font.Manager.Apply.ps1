@@ -1,6 +1,5 @@
 #!/usr/bin/env pwsh
-# Script lives in <install>\game\csgo\cfg — resolve install root from here
-$InstallRoot = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '..\..\..')).Path
+$InstallRoot = 'C:\Program Files (x86)\Steam\steamapps\common\Counter-Strike Global Offensive'
 $DestDir     = Join-Path $InstallRoot 'game'
 $GameCsgoDir = Join-Path $DestDir 'csgo'
 $exitCode    = 0
